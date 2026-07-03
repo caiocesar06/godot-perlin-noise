@@ -1,6 +1,7 @@
 #pragma once
 
 #include <godot_cpp/classes/ref_counted.hpp>
+#include <godot_cpp/variant/packed_byte_array.hpp>
 #include <godot_cpp/core/class_db.hpp>
 #include "perlin_noise_core.hpp"
 
@@ -33,6 +34,8 @@ namespace godot {
 
         double sample(double x, double y) const;
         double get_fbm(double x, double y) const;
+
+        PackedByteArray get_fbm_buffer(int64_t width, int64_t height, double scale, double offset_x, double offset_y) const;
     };
 
 } // namespace godot

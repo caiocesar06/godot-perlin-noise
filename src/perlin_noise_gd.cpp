@@ -14,6 +14,7 @@ namespace godot {
 
         ClassDB::bind_method(D_METHOD("sample", "x", "y"), &PerlinNoise::sample);
         ClassDB::bind_method(D_METHOD("get_fbm", "x", "y"), &PerlinNoise::get_fbm);
+        ClassDB::bind_method(D_METHOD("get_fbm_buffer", "width", "height", "scale", "offset_x", "offset_y"), &PerlinNoise::get_fbm_buffer);
 
         ADD_PROPERTY(PropertyInfo(Variant::INT, "octaves", PROPERTY_HINT_RANGE, "1,16,1"), "set_octaves", "get_octaves");
         ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "persistence", PROPERTY_HINT_RANGE, "0.0,1.0,0.05"), "set_persistence", "get_persistence");
@@ -54,6 +55,35 @@ namespace godot {
 
     double PerlinNoise::get_fbm(double x, double y) const {
         return core.fBm(static_cast<float>(x), static_cast<float>(y), octaves, static_cast<float>(persistence), static_cast<float>(lacunarity));
+    }
+
+    PackedByteArray PerlinNoise::get_fbm_buffer(int64_t width, int64_t height,
+        double scale, double offset_x, double offset_y) const
+    {
+        PackedByteArray buffer;
+        buffer.resize(width * height * 4);
+        uint8_t* ptr = buffer.ptrw();
+
+#pragma omp parallel for
+        for (int64_t y = 0; y < height; ++y) {
+            for (int64_t x = 0; x < width; ++x) {
+                double nx = (x + offset_x) * scale;
+                double ny = (y + offset_y) * scale;
+
+                float val = core.fBm(static_cast<float>(nx), static_cast<float>(ny),
+                    octaves, static_cast<float>(persistence), static_cast<float>(lacunarity));
+
+                int64_t cor = std::clamp(static_cast<int64_t>((val + 1.0) * 127.5),
+                    int64_t(0), int64_t(255));
+
+                int64_t idx = (y * width + x) * 4;
+                ptr[idx + 0] = static_cast<uint8_t>(cor); // R
+                ptr[idx + 1] = static_cast<uint8_t>(cor); // G
+                ptr[idx + 2] = static_cast<uint8_t>(cor); // B
+                ptr[idx + 3] = 255;                       // A (Opacidade máxima)
+            }
+        }
+        return buffer;
     }
 
 } // namespace godot

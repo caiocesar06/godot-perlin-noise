@@ -1,0 +1,11 @@
+[gd_scene format=3 uid="uid://nc3vvndjnxdn"]
+
+[ext_resource type="Script" uid="uid://cj3irgxa163ef" path="res://texture_rect.gd" id="1_2qqbk"]
+
+[node name="Node2D" type="Node2D" unique_id=903215134]
+
+[node name="TextureRect" type="TextureRect" parent="." unique_id=363220097]
+custom_minimum_size = Vector2(256, 256)
+offset_right = 40.0
+offset_bottom = 40.0
+script = ExtResource("1_2qqbk")
