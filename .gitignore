@@ -6,11 +6,11 @@ compile_commands.json
 *.o
 *.obj
 
-project/bin/*.dll
-project/bin/*.so
-project/bin/*.dylib
-project/bin/*.exp
-project/bin/*.lib
+project/addons/perlin_noise/bin/*.dll
+project/addons/perlin_noise/bin/*.so
+project/addons/perlin_noise/bin/*.dylib
+project/addons/perlin_noise/bin/*.exp
+project/addons/perlin_noise/bin/*.lib
 
 .vscode/.browse.c_cpp.db*
 .vscode/ipch/

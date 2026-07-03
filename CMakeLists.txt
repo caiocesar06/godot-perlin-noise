@@ -56,7 +56,6 @@ set_target_properties(perlin_noise PROPERTIES
     PREFIX "${LIB_PREFIX}"
     SUFFIX "${LIB_SUFFIX}"
 
-    LIBRARY_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/project/bin"
-
-    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/project/bin"
+    LIBRARY_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/project/addons/perlin_noise/bin"
+    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/project/addons/perlin_noise/bin"
 )
