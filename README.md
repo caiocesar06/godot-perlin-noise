@@ -60,7 +60,7 @@ func _ready():
 A engine do Godot (o repositório `godot-cpp`) está linkada como um submódulo. É **obrigatório** usar a flag `--recursive` ao clonar o projeto para que a pasta do motor não venha vazia:
 
 ```bash
-git clone --recursive [https://github.com/SEU_USUARIO/godot-perlin-noise.git](https://github.com/SEU_USUARIO/godot-perlin-noise.git)
+git clone --recursive [https://github.com/caiocesar06/godot-perlin-noise.git](https://github.com/caiocesar06/godot-perlin-noise.git)
 cd godot-perlin-noise
 
 ```
