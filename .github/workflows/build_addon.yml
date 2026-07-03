@@ -1,0 +1,65 @@
+name: Build Perlin Noise Addon
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        include:
+          - os: windows-latest
+            name: Windows
+          - os: ubuntu-latest
+            name: Linux
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+    - name: Checkout do Repositório
+      uses: actions/checkout@v4
+      with:
+        submodules: recursive
+
+    - name: Instalar dependências (Linux)
+      if: matrix.os == 'ubuntu-latest'
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y build-essential cmake ninja-build
+
+    - name: Setup MSYS2 (Windows)
+      if: matrix.os == 'windows-latest'
+      uses: msys2/setup-msys2@v2
+      with:
+        msystem: UCRT64
+        update: true
+        install: >-
+          mingw-w64-ucrt-x86_64-gcc
+          mingw-w64-ucrt-x86_64-cmake
+          mingw-w64-ucrt-x86_64-ninja
+          mingw-w64-ucrt-x86_64-openmp
+
+    - name: Gerar arquivos de Build (Linux)
+      if: matrix.os == 'ubuntu-latest'
+      run: cmake -B build -G "Ninja"
+
+    - name: Gerar arquivos de Build (Windows)
+      if: matrix.os == 'windows-latest'
+      shell: msys2 {0}
+      run: cmake -B build -G "Ninja"
+
+    - name: Compilar Binários (Linux)
+      if: matrix.os == 'ubuntu-latest'
+      run: cmake --build build --config Release
+
+    - name: Compilar Binários (Windows)
+      if: matrix.os == 'windows-latest'
+      shell: msys2 {0}
+      run: cmake --build build --config Release
+
+    - name: Upload dos Binários Gerados
+      uses: actions/upload-artifact@v4
+      with:
+        name: perlin-noise-${{ matrix.name }}-binaries
+        path: project/addons/perlin_noise/bin/
