@@ -1,5 +1,5 @@
 build/
-bin/
+./bin/
 CMakeCache.txt
 CMakeFiles/
 compile_commands.json
