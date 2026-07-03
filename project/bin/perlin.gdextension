@@ -1,0 +1,12 @@
+[configuration]
+entry_symbol = "perlin_library_init"
+compatibility_minimum = "4.1"
+reloadable = true
+
+[libraries]
+linux.debug.x86_64 = "res://bin/libperlin_noise.so"
+linux.release.x86_64 = "res://bin/libperlin_noise.so"
+windows.debug.x86_64 = "res://bin/perlin_noise.dll"
+windows.release.x86_64 = "res://bin/perlin_noise.dll"
+macos.debug = "res://bin/libperlin_noise.dylib"
+macos.release = "res://bin/libperlin_noise.dylib"

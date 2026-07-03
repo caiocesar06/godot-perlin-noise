@@ -1,0 +1,38 @@
+#pragma once
+
+#include <godot_cpp/classes/ref_counted.hpp>
+#include <godot_cpp/core/class_db.hpp>
+#include "perlin_noise_core.hpp"
+
+namespace godot {
+
+    class PerlinNoise : public RefCounted {
+        GDCLASS(PerlinNoise, RefCounted)
+
+    private:
+        PerlinNoiseCore core;
+        int32_t octaves;
+        double persistence;
+        double lacunarity;
+
+    protected:
+        static void _bind_methods();
+
+    public:
+        PerlinNoise();
+        ~PerlinNoise();
+
+        void set_octaves(int32_t p_octaves);
+        void set_persistence(double p_persistence);
+        void set_lacunarity(double p_lacunarity);
+        void set_seed(int64_t p_seed);
+
+        int32_t get_octaves() const;
+        double get_persistence() const;
+        double get_lacunarity() const;
+
+        double sample(double x, double y) const;
+        double get_fbm(double x, double y) const;
+    };
+
+} // namespace godot
