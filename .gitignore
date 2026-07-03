@@ -12,11 +12,6 @@ project/bin/*.dylib
 project/bin/*.exp
 project/bin/*.lib
 
-*.dll
-*.so
-*.dylib
-*.a
-
 .vscode/.browse.c_cpp.db*
 .vscode/ipch/
 *.code-workspace
