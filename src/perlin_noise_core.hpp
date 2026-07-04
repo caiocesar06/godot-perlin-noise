@@ -108,6 +108,8 @@ struct PerlinNoiseCore {
         return total / max_value;
     }
 
+    // TODO: Exposto exclusivamente para a ferramenta de debug visual.
+    // Permite a renderização da tabela de permutação e dos vetores de gradiente na interface.
     int get_hash(int i, int j) const {
         return p[p[i & 255] + (j & 255)];
     }

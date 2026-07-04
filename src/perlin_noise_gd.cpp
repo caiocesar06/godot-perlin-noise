@@ -4,7 +4,7 @@
 namespace godot {
 
     void PerlinNoise::_bind_methods() {
-        ClassDB::bind_method(D_METHOD("_init", "seed"), &PerlinNoise::_init, DEFVAL(Variant()));
+        ClassDB::bind_static_method("PerlinNoise", D_METHOD("create_with_seed", "seed"), &PerlinNoise::create_with_seed);
 
         ClassDB::bind_method(D_METHOD("set_octaves", "octaves"), &PerlinNoise::set_octaves);
         ClassDB::bind_method(D_METHOD("get_octaves"), &PerlinNoise::get_octaves);
@@ -31,13 +31,10 @@ namespace godot {
 
     PerlinNoise::~PerlinNoise() {}
 
-    void PerlinNoise::_init(const Variant& p_seed) {
-        if (p_seed.get_type() == Variant::INT)
-            set_seed(p_seed.operator int64_t());
-        else {
-            std::random_device rd;
-            set_seed(rd());
-        }
+    Ref<PerlinNoise> PerlinNoise::create_with_seed(int p_seed) {
+        Ref<PerlinNoise> instance = memnew(PerlinNoise);
+        instance->set_seed(p_seed);
+        return instance;
     }
 
     void PerlinNoise::set_octaves(int32_t p_octaves) {

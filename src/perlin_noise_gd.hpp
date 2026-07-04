@@ -3,10 +3,14 @@
 #include <godot_cpp/classes/ref_counted.hpp>
 #include <godot_cpp/variant/packed_byte_array.hpp>
 #include <godot_cpp/core/class_db.hpp>
+#include <godot_cpp/classes/ref.hpp>
 #include "perlin_noise_core.hpp"
 
 namespace godot {
 
+    // TODO: Refatorar para herdar de uma classe abstrata genérica 'RuidoBase'
+    // quando o algoritmo Simplex Noise for integrado ao projeto, permitindo polimorfismo
+    // direto na GDExtension (ex: RuidoBase* gerador = novo SimplexNoise()).
     class PerlinNoise : public RefCounted {
         GDCLASS(PerlinNoise, RefCounted)
 
@@ -23,7 +27,7 @@ namespace godot {
         PerlinNoise();
         ~PerlinNoise();
 
-        void _init(const Variant& p_seed = Variant());
+        static Ref<PerlinNoise> create_with_seed(int p_seed);
 
         void set_octaves(int32_t p_octaves);
         void set_persistence(double p_persistence);
