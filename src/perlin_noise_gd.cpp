@@ -4,6 +4,8 @@
 namespace godot {
 
     void PerlinNoise::_bind_methods() {
+        ClassDB::bind_method(D_METHOD("_init", "seed"), &PerlinNoise::_init, DEFVAL(Variant()));
+
         ClassDB::bind_method(D_METHOD("set_octaves", "octaves"), &PerlinNoise::set_octaves);
         ClassDB::bind_method(D_METHOD("get_octaves"), &PerlinNoise::get_octaves);
         ClassDB::bind_method(D_METHOD("set_persistence", "persistence"), &PerlinNoise::set_persistence);
@@ -28,6 +30,15 @@ namespace godot {
     }
 
     PerlinNoise::~PerlinNoise() {}
+
+    void PerlinNoise::_init(const Variant& p_seed) {
+        if (p_seed.get_type() == Variant::INT)
+            set_seed(p_seed.operator int64_t());
+        else {
+            std::random_device rd;
+            set_seed(rd());
+        }
+    }
 
     void PerlinNoise::set_octaves(int32_t p_octaves) {
         octaves = std::clamp(p_octaves, 1, 16);
@@ -60,6 +71,8 @@ namespace godot {
     PackedByteArray PerlinNoise::get_fbm_buffer(int64_t width, int64_t height,
         double scale, double offset_x, double offset_y) const
     {
+        ERR_FAIL_COND_V_MSG(width <= 0 || height <= 0, PackedByteArray(), "Width e Height devem ser maiores que zero.");
+
         PackedByteArray buffer;
         buffer.resize(width * height * 4);
         uint8_t* ptr = buffer.ptrw();

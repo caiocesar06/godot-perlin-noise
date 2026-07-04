@@ -4,7 +4,6 @@ var gerador: PerlinNoise
 
 func _ready() -> void:
 	gerador = PerlinNoise.new()
-	gerador.set_seed(42) 
 	gerador.set_octaves(6)
 	gerador.set_persistence(0.5)
 	gerador.set_lacunarity(2.0)

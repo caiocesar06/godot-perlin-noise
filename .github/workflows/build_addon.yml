@@ -40,14 +40,19 @@ jobs:
           mingw-w64-ucrt-x86_64-ninja
           mingw-w64-ucrt-x86_64-python
 
+    - name: Configurar ccache (Cache de Compilação C++)
+      uses: hendrikmuhs/ccache-action@v1.2
+      with:
+        key: ${{ matrix.os }}-ccache
+
     - name: Gerar arquivos de Build (Linux)
       if: matrix.os == 'ubuntu-latest'
-      run: cmake -B build -G "Ninja" -DCMAKE_BUILD_TYPE=Release
+      run: cmake -B build -G "Ninja" -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER_LAUNCHER=ccache -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
 
     - name: Gerar arquivos de Build (Windows)
       if: matrix.os == 'windows-latest'
       shell: msys2 {0}
-      run: cmake -B build -G "Ninja" -DCMAKE_BUILD_TYPE=Release
+      run: cmake -B build -G "Ninja" -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER_LAUNCHER=ccache -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
 
     - name: Compilar Binários (Linux)
       if: matrix.os == 'ubuntu-latest'

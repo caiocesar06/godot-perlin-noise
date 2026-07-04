@@ -12,6 +12,7 @@ set(SOURCES
 
 add_library(perlin_noise SHARED ${SOURCES})
 
+target_compile_features(perlin_noise PRIVATE cxx_std_17)
 target_link_libraries(perlin_noise PRIVATE godot-cpp)
 
 find_package(OpenMP)

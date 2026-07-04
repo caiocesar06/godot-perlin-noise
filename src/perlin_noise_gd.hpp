@@ -23,6 +23,8 @@ namespace godot {
         PerlinNoise();
         ~PerlinNoise();
 
+        void _init(const Variant& p_seed = Variant());
+
         void set_octaves(int32_t p_octaves);
         void set_persistence(double p_persistence);
         void set_lacunarity(double p_lacunarity);
