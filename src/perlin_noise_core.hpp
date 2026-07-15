@@ -62,9 +62,17 @@ struct PerlinNoiseCore {
         return a + t * (b - a);
     }
 
+
     float grad(int hash, float x, float y) const {
         int h = hash & 7;
         return G2D[h][0] * x + G2D[h][1] * y;
+    }
+
+    float grad(int hash, float x, float y, float z) const {
+        int h = hash & 15;
+        float u = h < 8 ? x : y;
+        float v = h < 4 ? y : (h == 12 || h == 14 ? v : -v);
+        return ((h & 1) == 0 ? u : -u) + ((h & 2) == 0 ? v : -v);
     }
 
     float noise(float x, float y) const {
@@ -92,6 +100,46 @@ struct PerlinNoiseCore {
         return lerp(v, x1, x2);
     }
 
+    float noise(float x, float y, float z) const {
+        int xi = fast_floor(x);
+        int yi = fast_floor(y);
+        int zi = fast_floor(z);
+
+        int i = xi & 255;
+        int j = yi & 255;
+        int k = zi & 255;
+
+        float xf = x - xi;
+        float yf = y - yi;
+        float zf = z - zi;
+
+        float u = fade(xf);
+        float v = fade(yf);
+        float w = fade(zf);
+
+        int a = p[i] + j;
+        int aa = p[a] + k;
+        int ab = p[a + 1] + k;
+        int b = p[i + 1] + j;
+        int ba = p[b] + k;
+        int bb = p[b + 1] + k;
+
+        return lerp(w,
+            lerp(v,
+                lerp(u, grad(p[aa], xf, yf, zf),
+                    grad(p[ba], xf - 1.0f, yf, zf)),
+                lerp(u, grad(p[ab], xf, yf - 1.0f, zf),
+                    grad(p[bb], xf - 1.0f, yf - 1.0f, zf))
+            ),
+            lerp(v,
+                lerp(u, grad(p[aa + 1], xf, yf, zf - 1.0f),
+                    grad(p[ba + 1], xf - 1.0f, yf, zf - 1.0f)),
+                lerp(u, grad(p[ab + 1], xf, yf - 1.0f, zf - 1.0f),
+                    grad(p[bb + 1], xf - 1.0f, yf - 1.0f, zf - 1.0f))
+            )
+        );
+    }
+
     float fBm(float x, float y, int octaves, float persistence, float lacunarity) const {
         float total = 0.0f;
         float amplitude = 1.0f;
@@ -100,6 +148,22 @@ struct PerlinNoiseCore {
 
         for (int i = 0; i < octaves; ++i) {
             total += noise(x * frequency, y * frequency) * amplitude;
+            max_value += amplitude;
+            amplitude *= persistence;
+            frequency *= lacunarity;
+        }
+
+        return total / max_value;
+    }
+
+    float fBm(float x, float y, float z, int octaves, float persistence, float lacunarity) const {
+        float total = 0.0f;
+        float amplitude = 1.0f;
+        float frequency = 1.0f;
+        float max_value = 0.0f;
+
+        for (int i = 0; i < octaves; ++i) {
+            total += noise(x * frequency, y * frequency, z * frequency) * amplitude;
             max_value += amplitude;
             amplitude *= persistence;
             frequency *= lacunarity;

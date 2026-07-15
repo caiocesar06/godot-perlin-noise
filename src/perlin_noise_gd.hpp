@@ -38,8 +38,11 @@ namespace godot {
         double get_persistence() const;
         double get_lacunarity() const;
 
-        double sample(double x, double y) const;
-        double get_fbm(double x, double y) const;
+        double sample_2D(double x, double y) const;
+        double get_fbm_2D(double x, double y) const;
+
+        double sample_3D(double x, double y, double z) const;
+        double get_fbm_3D(double x, double y, double z) const;
 
         PackedByteArray get_fbm_buffer(int64_t width, int64_t height, double scale, double offset_x, double offset_y) const;
     };

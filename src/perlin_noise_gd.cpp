@@ -14,8 +14,12 @@ namespace godot {
         ClassDB::bind_method(D_METHOD("get_lacunarity"), &PerlinNoise::get_lacunarity);
         ClassDB::bind_method(D_METHOD("set_seed", "seed"), &PerlinNoise::set_seed);
 
-        ClassDB::bind_method(D_METHOD("sample", "x", "y"), &PerlinNoise::sample);
-        ClassDB::bind_method(D_METHOD("get_fbm", "x", "y"), &PerlinNoise::get_fbm);
+        ClassDB::bind_method(D_METHOD("sample_2D", "x", "y"), &PerlinNoise::sample_2D);
+        ClassDB::bind_method(D_METHOD("get_fbm_2D", "x", "y"), &PerlinNoise::get_fbm_2D);
+
+        ClassDB::bind_method(D_METHOD("sample_3D", "x", "y", "z"), &PerlinNoise::sample_3D);
+        ClassDB::bind_method(D_METHOD("get_fbm_3D", "x", "y", "z"), &PerlinNoise::get_fbm_3D);
+
         ClassDB::bind_method(D_METHOD("get_fbm_buffer", "width", "height", "scale", "offset_x", "offset_y"), &PerlinNoise::get_fbm_buffer);
 
         ADD_PROPERTY(PropertyInfo(Variant::INT, "octaves", PROPERTY_HINT_RANGE, "1,16,1"), "set_octaves", "get_octaves");
@@ -57,12 +61,20 @@ namespace godot {
     double PerlinNoise::get_persistence() const { return persistence; }
     double PerlinNoise::get_lacunarity() const { return lacunarity; }
 
-    double PerlinNoise::sample(double x, double y) const {
+    double PerlinNoise::sample_2D(double x, double y) const {
         return core.noise(static_cast<float>(x), static_cast<float>(y));
     }
 
-    double PerlinNoise::get_fbm(double x, double y) const {
+    double PerlinNoise::get_fbm_2D(double x, double y) const {
         return core.fBm(static_cast<float>(x), static_cast<float>(y), octaves, static_cast<float>(persistence), static_cast<float>(lacunarity));
+    }
+
+    double PerlinNoise::sample_3D(double x, double y, double z) const {
+        return core.noise(static_cast<float>(x), static_cast<float>(y), static_cast<float>(z));
+    }
+
+    double PerlinNoise::get_fbm_3D(double x, double y, double z) const {
+        return core.fBm(static_cast<float>(x), static_cast<float>(y), static_cast<float>(z), octaves, static_cast<float>(persistence), static_cast<float>(lacunarity));
     }
 
     PackedByteArray PerlinNoise::get_fbm_buffer(int64_t width, int64_t height,
