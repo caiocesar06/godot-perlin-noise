@@ -32,9 +32,9 @@ func _ready():
     var mapa_ruido = PerlinNoise.new()
 
     # Configura os parâmetros fractais
-    mapa_ruido.octaves = 6
-    mapa_ruido.persistence = 0.5
-    mapa_ruido.lacunarity = 2.0
+    mapa_ruido.set_octaves(6)
+    mapa_ruido.set_persistence(0.5)
+    mapa_ruido.set_lacunarity(2.0)
 
     # Amostra um valor no espaço 2D
     var elevacao = mapa_ruido.sample_2D(10.5, 20.1)
