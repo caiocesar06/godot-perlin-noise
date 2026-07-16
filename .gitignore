@@ -12,8 +12,7 @@ project/addons/perlin_noise/bin/*.dylib
 project/addons/perlin_noise/bin/*.exp
 project/addons/perlin_noise/bin/*.lib
 
-.vscode/.browse.c_cpp.db*
-.vscode/ipch/
+.vscode/
 *.code-workspace
 
 .DS_Store
