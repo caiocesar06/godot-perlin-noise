@@ -1,0 +1,26 @@
+[gd_scene format=3 uid="uid://qbya43d82vfk"]
+
+[ext_resource type="PackedScene" uid="uid://bv0seb83allrx" path="res://instances_2d_tab.tscn" id="1_saa3o"]
+[ext_resource type="Script" uid="uid://blrvdpfsfybja" path="res://instances_2d_tab.gd" id="2_105cf"]
+
+[node name="PerlinMasterTool" type="Control" unique_id=2081994299]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="TabContainer" type="TabContainer" parent="." unique_id=1177635384]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+current_tab = 0
+
+[node name="Instance2DTab" parent="TabContainer" unique_id=1879912539 instance=ExtResource("1_saa3o")]
+layout_mode = 2
+script = ExtResource("2_105cf")
+metadata/_tab_index = 0
