@@ -2,6 +2,7 @@
 
 [ext_resource type="PackedScene" uid="uid://bv0seb83allrx" path="res://instances_2d_tab.tscn" id="1_saa3o"]
 [ext_resource type="Script" uid="uid://blrvdpfsfybja" path="res://instances_2d_tab.gd" id="2_105cf"]
+[ext_resource type="PackedScene" uid="uid://662lwlpqua4a" path="res://volumetric_3d_tab.tscn" id="3_105cf"]
 
 [node name="PerlinMasterTool" type="Control" unique_id=2081994299]
 layout_mode = 3
@@ -24,3 +25,8 @@ current_tab = 0
 layout_mode = 2
 script = ExtResource("2_105cf")
 metadata/_tab_index = 0
+
+[node name="Volumetric3DTab" parent="TabContainer" unique_id=713292220 instance=ExtResource("3_105cf")]
+visible = false
+layout_mode = 2
+metadata/_tab_index = 1
