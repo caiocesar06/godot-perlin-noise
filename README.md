@@ -4,7 +4,7 @@
 
 Ferramenta de geração procedural baseada no algoritmo de Perlin Noise, desenvolvida nativamente em C++ via GDExtension para a Godot Engine 4. Este projeto integra paralelismo massivo em CPU utilizando OpenMP, focado em alta performance para geração de terrenos e texturas em tempo real.
 
-Este repositório é fruto do projeto de Iniciação Científica (PIC1422-2025) do CEFET-MG, servindo também como módulo base para a geração procedural de fases do projeto "Formiguinha Matemática".
+Este repositório é fruto do projeto de Iniciação Científica (PIC1422-2025) do CEFET-MG, servindo também como módulo base para outros projetos de geração procedural.
 
 ---
 
