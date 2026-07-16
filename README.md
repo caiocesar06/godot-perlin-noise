@@ -37,7 +37,7 @@ func _ready():
     mapa_ruido.lacunarity = 2.0
 
     # Amostra um valor no espaço 2D
-    var elevacao = mapa_ruido.sample(10.5, 20.1)
+    var elevacao = mapa_ruido.sample_2D(10.5, 20.1)
     print("Elevação: ", elevacao)
 
 ```

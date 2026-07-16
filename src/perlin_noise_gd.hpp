@@ -33,10 +33,12 @@ namespace godot {
         void set_persistence(double p_persistence);
         void set_lacunarity(double p_lacunarity);
         void set_seed(int64_t p_seed);
+        void set_fade_mode(int32_t p_mode);
 
         int32_t get_octaves() const;
         double get_persistence() const;
         double get_lacunarity() const;
+        int32_t get_fade_mode() const;
 
         double sample_2D(double x, double y) const;
         double get_fbm_2D(double x, double y) const;

@@ -1,8 +1,11 @@
 cmake_minimum_required(VERSION 3.16)
 project(PerlinNoiseProject)
 
-set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+if(NOT CMAKE_BUILD_TYPE)
+    set(CMAKE_BUILD_TYPE Release CACHE STRING "Build type" FORCE)
+endif()
 
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 add_subdirectory(godot-cpp)
 
 set(SOURCES
@@ -11,9 +14,12 @@ set(SOURCES
 )
 
 add_library(perlin_noise SHARED ${SOURCES})
-
 target_compile_features(perlin_noise PRIVATE cxx_std_17)
 target_link_libraries(perlin_noise PRIVATE godot-cpp)
+
+if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
+    target_compile_options(perlin_noise PRIVATE -O3 -ffast-math)
+endif()
 
 find_package(OpenMP)
 if(OpenMP_CXX_FOUND)

@@ -13,6 +13,8 @@ namespace godot {
         ClassDB::bind_method(D_METHOD("set_lacunarity", "lacunarity"), &PerlinNoise::set_lacunarity);
         ClassDB::bind_method(D_METHOD("get_lacunarity"), &PerlinNoise::get_lacunarity);
         ClassDB::bind_method(D_METHOD("set_seed", "seed"), &PerlinNoise::set_seed);
+        ClassDB::bind_method(D_METHOD("set_fade_mode", "mode"), &PerlinNoise::set_fade_mode);
+        ClassDB::bind_method(D_METHOD("get_fade_mode"), &PerlinNoise::get_fade_mode);
 
         ClassDB::bind_method(D_METHOD("sample_2D", "x", "y"), &PerlinNoise::sample_2D);
         ClassDB::bind_method(D_METHOD("get_fbm_2D", "x", "y"), &PerlinNoise::get_fbm_2D);
@@ -25,6 +27,7 @@ namespace godot {
         ADD_PROPERTY(PropertyInfo(Variant::INT, "octaves", PROPERTY_HINT_RANGE, "1,16,1"), "set_octaves", "get_octaves");
         ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "persistence", PROPERTY_HINT_RANGE, "0.0,1.0,0.05"), "set_persistence", "get_persistence");
         ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "lacunarity", PROPERTY_HINT_RANGE, "1.0,4.0,0.1"), "set_lacunarity", "get_lacunarity");
+        ADD_PROPERTY(PropertyInfo(Variant::INT, "fade_mode", PROPERTY_HINT_ENUM, "None,Cubic,Quintic"), "set_fade_mode", "get_fade_mode");
     }
 
     PerlinNoise::PerlinNoise() : core(std::random_device{}()) {
@@ -57,9 +60,16 @@ namespace godot {
         core.set_seed(static_cast<unsigned int>(p_seed));
     }
 
+    void PerlinNoise::set_fade_mode(int32_t p_mode) {
+        core.fade_mode = static_cast<FadeMode>(std::clamp(p_mode, 0, 2));
+    }
+
     int32_t PerlinNoise::get_octaves() const { return octaves; }
     double PerlinNoise::get_persistence() const { return persistence; }
     double PerlinNoise::get_lacunarity() const { return lacunarity; }
+    int32_t PerlinNoise::get_fade_mode() const {
+        return static_cast<int32_t>(core.fade_mode);
+    }
 
     double PerlinNoise::sample_2D(double x, double y) const {
         return core.noise(static_cast<float>(x), static_cast<float>(y));
