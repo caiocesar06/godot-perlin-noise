@@ -1,9 +1,9 @@
 #include "register_types.h"
-#include "perlin_noise_gd.hpp"
-
-#include <gdextension_interface.h>
-#include <godot_cpp/core/defs.hpp>
+#include <godot_cpp/core/class_db.hpp>
 #include <godot_cpp/godot.hpp>
+
+#include "perlin_noise_2d.hpp"
+#include "perlin_noise_3d.hpp"
 
 using namespace godot;
 
@@ -11,7 +11,9 @@ void initialize_perlin_module(ModuleInitializationLevel p_level) {
     if (p_level != MODULE_INITIALIZATION_LEVEL_SCENE) {
         return;
     }
-    GDREGISTER_CLASS(PerlinNoise);
+
+    GDREGISTER_CLASS(PerlinNoise2D);
+    GDREGISTER_CLASS(PerlinNoise3D);
 }
 
 void uninitialize_perlin_module(ModuleInitializationLevel p_level) {

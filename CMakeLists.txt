@@ -7,6 +7,10 @@ endif()
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 add_subdirectory(godot-cpp)
+include_directories(
+    godot-cpp/include
+    godot-cpp/gen/include
+)
 
 set(SOURCES
     src/register_types.cpp

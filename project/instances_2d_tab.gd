@@ -15,7 +15,7 @@ extends HBoxContainer
 @onready var lacunarity_label: Label = $SettingsPanel/SettingsVBox/LacunarityLabel
 
 # --- MEMORY STATE ---
-var active_generators: Array[PerlinNoise] = []
+var active_generators: Array[PerlinNoise2D] = []
 var active_screens: Array[TextureRect] = []
 
 var internal_resolution: int = 256
@@ -68,7 +68,8 @@ func _on_generate_button_pressed() -> void:
 		new_screen.size_flags_vertical = Control.SIZE_EXPAND_FILL
 		new_screen.custom_minimum_size = Vector2(0, internal_resolution)
 		
-		var generator = PerlinNoise.create_with_seed(instance_seed)
+		var generator = PerlinNoise2D.new()
+		generator.set_seed(instance_seed)
 		
 		active_generators.append(generator)
 		active_screens.append(new_screen)

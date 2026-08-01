@@ -18,7 +18,7 @@ extends HBoxContainer
 @onready var amplitude_label: Label = $SettingsPanel/SettingsVBox/AmplitudeLabel
 
 # --- MEMORY STATE ---
-var perlin: PerlinNoise
+var perlin: PerlinNoise2D
 
 # --- ORBIT CAMERA STATE ---
 var camera_target: Vector3 = Vector3(0, 0, 0)
@@ -30,7 +30,7 @@ var pan_sensitivity: float = 0.05
 var zoom_speed: float = 5.0
 
 func _ready() -> void:
-	perlin = PerlinNoise.create_with_seed(42)
+	perlin = PerlinNoise2D.create_with_seed(42)
 	
 	generate_button.pressed.connect(_on_generate_button_pressed)
 	

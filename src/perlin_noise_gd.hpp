@@ -4,6 +4,7 @@
 #include <godot_cpp/variant/packed_byte_array.hpp>
 #include <godot_cpp/core/class_db.hpp>
 #include <godot_cpp/classes/ref.hpp>
+
 #include "perlin_noise_core.hpp"
 
 namespace godot {
