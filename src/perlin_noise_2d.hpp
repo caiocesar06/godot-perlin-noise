@@ -1,6 +1,7 @@
 #pragma once
 
 #include <godot_cpp/classes/resource.hpp>
+#include <godot_cpp/variant/packed_byte_array.hpp>
 #include "perlin_hash.hpp"
 
 namespace godot {
@@ -35,5 +36,7 @@ namespace godot {
 
         double sample(double x, double y) const;
         double fbm(double x, double y) const;
+
+        PackedByteArray get_fbm_buffer(int64_t width, int64_t height, double scale, double offset_x, double offset_y) const;
     };
 }

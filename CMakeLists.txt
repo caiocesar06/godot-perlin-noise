@@ -14,7 +14,8 @@ include_directories(
 
 set(SOURCES
     src/register_types.cpp
-    src/perlin_noise_gd.cpp
+    src/perlin_noise_2d.cpp
+    src/perlin_noise_3d.cpp
 )
 
 add_library(perlin_noise SHARED ${SOURCES})

@@ -23,14 +23,15 @@ var perlin: PerlinNoise2D
 # --- ORBIT CAMERA STATE ---
 var camera_target: Vector3 = Vector3(0, 0, 0)
 var camera_distance: float = 80.0
-var camera_yaw: float = PI / 4.0   # Inicia inclinada em 45 graus no eixo Y
-var camera_pitch: float = -PI / 6.0 # Inicia olhando 30 graus para baixo
+var camera_yaw: float = PI / 4.0
+var camera_pitch: float = -PI / 6.0
 var orbit_sensitivity: float = 0.005
 var pan_sensitivity: float = 0.05
 var zoom_speed: float = 5.0
 
 func _ready() -> void:
-	perlin = PerlinNoise2D.create_with_seed(42)
+	perlin = PerlinNoise2D.new()
+	perlin.set_seed(42)
 	
 	generate_button.pressed.connect(_on_generate_button_pressed)
 	
@@ -42,8 +43,8 @@ func _ready() -> void:
 	_update_ui_texts()
 	_generate_3d_terrain()
 	
-	# Força o posicionamento inicial da câmera antes do primeiro frame
 	_update_camera_transform()
+
 
 # --- INPUT HANDLING (Event-Driven) ---
 
@@ -53,21 +54,17 @@ func _input(event: InputEvent) -> void:
 		camera_yaw -= event.relative.x * orbit_sensitivity
 		camera_pitch -= event.relative.y * orbit_sensitivity
 		
-		# Trava matemática polar (Gimbal Lock) a aproximadamente 89 graus
 		camera_pitch = clamp(camera_pitch, -PI / 2.0 + 0.01, PI / 2.0 - 0.01)
 		_update_camera_transform()
 		
-	# 2. PAN (Mover a malha lateralmente): Botão Direito + Arrastar
 	elif event is InputEventMouseMotion and Input.is_mouse_button_pressed(MOUSE_BUTTON_RIGHT):
 		var right_dir = camera.transform.basis.x
 		var up_dir = camera.transform.basis.y
 		
-		# Movemos o ponto focal inversamente ao movimento do mouse
 		camera_target -= right_dir * event.relative.x * pan_sensitivity
 		camera_target += up_dir * event.relative.y * pan_sensitivity
 		_update_camera_transform()
 		
-	# 3. ZOOM (Aproximar/Afastar): Roda do Mouse
 	elif event is InputEventMouseButton:
 		if event.button_index == MOUSE_BUTTON_WHEEL_UP:
 			camera_distance = max(5.0, camera_distance - zoom_speed)
@@ -76,15 +73,13 @@ func _input(event: InputEvent) -> void:
 			camera_distance = min(200.0, camera_distance + zoom_speed)
 			_update_camera_transform()
 
-# Calcula a posição cartesiana a partir das coordenadas esféricas
 func _update_camera_transform() -> void:
 	var offset = Vector3(0, 0, camera_distance)
-	# A ordem de rotação é estrita: Pitch local primeiro, Yaw global depois
 	offset = offset.rotated(Vector3.RIGHT, camera_pitch)
 	offset = offset.rotated(Vector3.UP, camera_yaw)
 	
 	camera.position = camera_target + offset
-	camera.look_at(camera_target) # Garante que a lente aponte sempre para o centroide
+	camera.look_at(camera_target)
 
 # --- TERRAIN GENERATION LOGIC ---
 
@@ -116,7 +111,7 @@ func _generate_3d_terrain() -> void:
 	
 	for z in range(grid_size):
 		for x in range(grid_size):
-			var y_height = perlin.get_fbm_2D(x * scale_factor, z * scale_factor) * amplitude
+			var y_height = perlin.fbm(x * scale_factor, z * scale_factor) * amplitude
 			surface_tool.set_uv(Vector2(x, z) / float(grid_size))
 			surface_tool.add_vertex(Vector3(x, y_height, z))
 	
@@ -141,6 +136,4 @@ func _generate_3d_terrain() -> void:
 	
 	mesh_instance.mesh = surface_tool.commit()
 	
-	# Ao centrar a malha na origem, o nosso `camera_target = Vector3(0,0,0)` aponta 
-	# perfeitamente para o centro geométrico do terreno.
 	mesh_instance.position = Vector3(-grid_size / 2.0, 0, -grid_size / 2.0)
