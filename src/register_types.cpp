@@ -2,6 +2,8 @@
 #include <godot_cpp/core/class_db.hpp>
 #include <godot_cpp/godot.hpp>
 
+#include "noise_base.hpp"
+
 #include "noise_base_2d.hpp"
 #include "noise_base_3d.hpp"
 
@@ -14,6 +16,7 @@ void initialize_perlin_module(ModuleInitializationLevel p_level) {
     if (p_level != MODULE_INITIALIZATION_LEVEL_SCENE) {
         return;
     }
+    GDREGISTER_ABSTRACT_CLASS(NoiseBase);
 
     GDREGISTER_ABSTRACT_CLASS(NoiseBase2D);
     GDREGISTER_ABSTRACT_CLASS(NoiseBase3D);

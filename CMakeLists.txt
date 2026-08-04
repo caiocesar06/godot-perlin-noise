@@ -14,6 +14,7 @@ include_directories(
 
 set(SOURCES
     src/register_types.cpp
+    src/noise_base.cpp
     src/noise_base_2d.cpp
     src/noise_base_3d.cpp
     src/perlin_noise_2d.cpp
