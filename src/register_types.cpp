@@ -15,7 +15,7 @@ void initialize_perlin_module(ModuleInitializationLevel p_level) {
         return;
     }
 
-    GDREGISTER_ABSTRACT_CLASS(NoiseBase3D);
+    GDREGISTER_ABSTRACT_CLASS(NoiseBase2D);
     GDREGISTER_ABSTRACT_CLASS(NoiseBase3D);
 
     GDREGISTER_CLASS(PerlinNoise2D);
