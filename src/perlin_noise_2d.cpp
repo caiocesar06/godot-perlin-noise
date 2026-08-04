@@ -12,42 +12,29 @@ namespace godot {
     void PerlinNoise2D::_bind_methods() {
         ClassDB::bind_method(D_METHOD("set_seed", "seed"), &PerlinNoise2D::set_seed);
 
-        ClassDB::bind_method(D_METHOD("set_octaves", "octaves"), &PerlinNoise2D::set_octaves);
-        ClassDB::bind_method(D_METHOD("get_octaves"), &PerlinNoise2D::get_octaves);
-        ClassDB::bind_method(D_METHOD("set_persistence", "persistence"), &PerlinNoise2D::set_persistence);
-        ClassDB::bind_method(D_METHOD("get_persistence"), &PerlinNoise2D::get_persistence);
-        ClassDB::bind_method(D_METHOD("set_lacunarity", "lacunarity"), &PerlinNoise2D::set_lacunarity);
-        ClassDB::bind_method(D_METHOD("get_lacunarity"), &PerlinNoise2D::get_lacunarity);
         ClassDB::bind_method(D_METHOD("set_fade_mode", "mode"), &PerlinNoise2D::set_fade_mode);
         ClassDB::bind_method(D_METHOD("get_fade_mode"), &PerlinNoise2D::get_fade_mode);
 
         ClassDB::bind_method(D_METHOD("sample", "x", "y"), &PerlinNoise2D::sample);
-        ClassDB::bind_method(D_METHOD("fbm", "x", "y"), &PerlinNoise2D::fbm);
 
-        ClassDB::bind_method(D_METHOD("get_fbm_buffer", "width", "height", "scale", "offset_x", "offset_y"), &PerlinNoise2D::get_fbm_buffer);
-
-        ADD_PROPERTY(PropertyInfo(Variant::INT, "octaves", PROPERTY_HINT_RANGE, "1,16,1"), "set_octaves", "get_octaves");
-        ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "persistence", PROPERTY_HINT_RANGE, "0.0,1.0,0.05"), "set_persistence", "get_persistence");
-        ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "lacunarity", PROPERTY_HINT_RANGE, "1.0,4.0,0.1"), "set_lacunarity", "get_lacunarity");
         ADD_PROPERTY(PropertyInfo(Variant::INT, "fade_mode", PROPERTY_HINT_ENUM, "None,Cubic,Quintic"), "set_fade_mode", "get_fade_mode");
     }
 
     PerlinNoise2D::PerlinNoise2D() {}
 
-    void PerlinNoise2D::set_seed(int64_t p_seed) { _hash.set_seed(static_cast<unsigned int>(p_seed)); }
-    void PerlinNoise2D::set_octaves(int32_t p_octaves) { octaves = std::clamp(p_octaves, 1, 16); }
-    int32_t PerlinNoise2D::get_octaves() const { return octaves; }
-    void PerlinNoise2D::set_persistence(double p_persistence) { persistence = std::clamp(p_persistence, 0.0, 1.0); }
-    double PerlinNoise2D::get_persistence() const { return persistence; }
-    void PerlinNoise2D::set_lacunarity(double p_lacunarity) { lacunarity = std::clamp(p_lacunarity, 1.0, 4.0); }
-    double PerlinNoise2D::get_lacunarity() const { return lacunarity; }
+    void PerlinNoise2D::set_seed(int64_t p_seed) {
+        _hash.set_seed(static_cast<unsigned int>(p_seed));
+    }
 
-    void PerlinNoise2D::set_fade_mode(int32_t p_mode) { _hash.fade_mode = static_cast<FadeMode>(std::clamp(p_mode, 0, 2)); }
+    void PerlinNoise2D::set_fade_mode(int32_t p_mode) {
+        _hash.fade_mode = static_cast<FadeMode>(std::clamp(p_mode, 0, 2));
+    }
     int32_t PerlinNoise2D::get_fade_mode() const { return static_cast<int32_t>(_hash.fade_mode); }
 
     float PerlinNoise2D::grad(int hash, float x, float y) const {
         static constexpr float G2D[8][2] = {
-            { 1.0f, 0.0f }, {-1.0f, 0.0f }, { 0.0f, 1.0f }, { 0.0f, -1.0f },
+            { 1.0f, 0.0f }, {-1.0f, 0.0f },
+            { 0.0f, 1.0f }, { 0.0f, -1.0f },
             { 0.707106f, 0.707106f }, {-0.707106f, 0.707106f },
             { 0.707106f, -0.707106f }, {-0.707106f, -0.707106f }
         };
@@ -80,47 +67,4 @@ namespace godot {
 
         return static_cast<double>(_hash.lerp(v, x1, x2));
     }
-
-    double PerlinNoise2D::fbm(double x, double y) const {
-        double total = 0.0;
-        double amplitude = 1.0;
-        double frequency = 1.0;
-        double max_value = 0.0;
-
-        for (int i = 0; i < octaves; ++i) {
-            total += sample(x * frequency, y * frequency) * amplitude;
-            max_value += amplitude;
-            amplitude *= persistence;
-            frequency *= lacunarity;
-        }
-        return total / max_value;
-    }
-
-    PackedByteArray PerlinNoise2D::get_fbm_buffer(int64_t width, int64_t height, double scale, double offset_x, double offset_y) const {
-        ERR_FAIL_COND_V_MSG(width <= 0 || height <= 0, PackedByteArray(), "Width e Height devem ser maiores que zero.");
-
-        PackedByteArray buffer;
-        buffer.resize(width * height * 4);
-        uint8_t* ptr = buffer.ptrw();
-
-#pragma omp parallel for
-        for (int64_t y = 0; y < height; ++y) {
-            for (int64_t x = 0; x < width; ++x) {
-                double nx = (x + offset_x) * scale;
-                double ny = (y + offset_y) * scale;
-
-                double val = fbm(nx, ny);
-
-                int64_t cor = std::clamp(static_cast<int64_t>((val + 1.0) * 127.5), int64_t(0), int64_t(255));
-
-                int64_t idx = (y * width + x) * 4;
-                ptr[idx + 0] = static_cast<uint8_t>(cor); // R
-                ptr[idx + 1] = static_cast<uint8_t>(cor); // G
-                ptr[idx + 2] = static_cast<uint8_t>(cor); // B
-                ptr[idx + 3] = 255;                       // A (Opacidade máxima)
-            }
-        }
-        return buffer;
-    }
-} // namespace godot
-
+}

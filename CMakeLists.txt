@@ -14,6 +14,8 @@ include_directories(
 
 set(SOURCES
     src/register_types.cpp
+    src/noise_base_2d.cpp
+    src/noise_base_3d.cpp
     src/perlin_noise_2d.cpp
     src/perlin_noise_3d.cpp
 )
@@ -52,8 +54,6 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
             COMMAND ${CMAKE_COMMAND} -E copy_if_different
                 "${MINGW_BIN_DIR}/libgomp-1.dll"
                 "$<TARGET_FILE_DIR:perlin_noise>"
-
-            COMMENT "Automação: Copiando dependências do MinGW (libgcc, Pthreads, OpenMP) para project/bin..."
         )
     endif()
 elseif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
