@@ -3,12 +3,7 @@
 #include <godot_cpp/godot.hpp>
 
 #include "noise_base.hpp"
-
-#include "noise_base_2d.hpp"
-#include "noise_base_3d.hpp"
-
-#include "perlin_noise_2d.hpp"
-#include "perlin_noise_3d.hpp"
+#include "perlin_noise.hpp"
 
 using namespace godot;
 
@@ -17,12 +12,7 @@ void initialize_perlin_module(ModuleInitializationLevel p_level) {
         return;
     }
     GDREGISTER_ABSTRACT_CLASS(NoiseBase);
-
-    GDREGISTER_ABSTRACT_CLASS(NoiseBase2D);
-    GDREGISTER_ABSTRACT_CLASS(NoiseBase3D);
-
-    GDREGISTER_CLASS(PerlinNoise2D);
-    GDREGISTER_CLASS(PerlinNoise3D);
+    GDREGISTER_CLASS(PerlinNoise);
 }
 
 void uninitialize_perlin_module(ModuleInitializationLevel p_level) {
