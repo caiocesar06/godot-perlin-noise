@@ -18,7 +18,7 @@ extends HBoxContainer
 @onready var amplitude_label: Label = $SettingsPanel/SettingsVBox/AmplitudeLabel
 
 # --- MEMORY STATE ---
-var perlin: PerlinNoise2D
+var perlin: PerlinNoise
 
 # --- ORBIT CAMERA STATE ---
 var camera_target: Vector3 = Vector3(0, 0, 0)
@@ -30,7 +30,7 @@ var pan_sensitivity: float = 0.05
 var zoom_speed: float = 5.0
 
 func _ready() -> void:
-	perlin = PerlinNoise2D.new()
+	perlin = PerlinNoise.new()
 	perlin.set_seed(42)
 	
 	generate_button.pressed.connect(_on_generate_button_pressed)
@@ -111,7 +111,7 @@ func _generate_3d_terrain() -> void:
 	
 	for z in range(grid_size):
 		for x in range(grid_size):
-			var y_height = perlin.fbm(x * scale_factor, z * scale_factor) * amplitude
+			var y_height = perlin.get_fbm_2d(x * scale_factor, z * scale_factor) * amplitude
 			surface_tool.set_uv(Vector2(x, z) / float(grid_size))
 			surface_tool.add_vertex(Vector3(x, y_height, z))
 	

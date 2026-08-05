@@ -4,6 +4,9 @@
 #include <godot_cpp/variant/packed_byte_array.hpp>
 
 namespace godot {
+
+    enum class FractalType { FBM, RIDGED, BILLOW };
+
     class NoiseBase : public Resource {
         GDCLASS(NoiseBase, Resource)
 
@@ -11,6 +14,7 @@ namespace godot {
         int32_t _octaves = 4;
         double _persistence = 0.5;
         double _lacunarity = 2.0;
+        FractalType _fractal_type = FractalType::FBM;
 
     protected:
         static void _bind_methods();
@@ -28,6 +32,9 @@ namespace godot {
         void set_lacunarity(double p_lacunarity);
         double get_lacunarity() const;
 
+        void set_fractal_type(int32_t p_type);
+        int32_t get_fractal_type() const;
+
         // -------------------------------------------------- //
 
         virtual double get_noise_2d(
@@ -42,12 +49,12 @@ namespace godot {
         ) const = 0;
 
 
-        double get_fbm_2d(
+        double get_fractal_noise_2d(
             double x,
             double y
         ) const;
 
-        double get_fbm_3d(
+        double get_fractal_noise_3d(
             double x,
             double y,
             double z

@@ -13,7 +13,7 @@ extends HBoxContainer
 @onready var octaves_label: Label = $SettingsPanel/SettingsVBox/OctavesLabel
 
 # --- MEMORY STATE ---
-var perlin: PerlinNoise3D
+var perlin: PerlinNoise
 var grid_size: int = 32
 
 # --- CAMERA STATE ---
@@ -26,7 +26,7 @@ var pan_sensitivity: float = 0.05
 var zoom_speed: float = 5.0
 
 func _ready() -> void:
-	perlin = PerlinNoise3D.new()
+	perlin = PerlinNoise.new()
 	perlin.set_seed(42)
 	
 	generate_button.pressed.connect(_on_generate_button_pressed)
@@ -90,7 +90,7 @@ func generate_volume() -> void:
 	var scale_factor: float = scale_slider.value
 	var threshold: int = int(threshold_slider.value)
 	
-	var buffer: PackedByteArray = perlin.get_fbm_buffer_3d(grid_size, grid_size, grid_size, scale_factor, 0.0, 0.0, 0.0)
+	var buffer: PackedByteArray = perlin.get_fbm_volume_data(grid_size, grid_size, grid_size, scale_factor, 0.0, 0.0, 0.0)
 	
 	var box_mesh = BoxMesh.new()
 	box_mesh.size = Vector3(1, 1, 1)
