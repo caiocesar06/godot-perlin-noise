@@ -16,6 +16,37 @@ namespace godot {
         double _lacunarity = 2.0;
         FractalType _fractal_type = FractalType::FBM;
 
+        template <typename F>
+        double _calculate_fractal(F evaluate_noise) const {
+            double total = 0.0;
+            double amplitude = 1.0;
+            double frequency = 1.0;
+            double max_value = 0.0;
+
+            for (int i = 0; i < _octaves; ++i) {
+                double v = evaluate_noise(frequency);
+
+                switch (_fractal_type) {
+                case FractalType::FBM:
+                    break;
+                case FractalType::RIDGED:
+                    v = 1.0 - (2.0 * std::abs(v));
+                    break;
+                case FractalType::BILLOW:
+                    v = (2.0 * std::abs(v)) - 1.0;
+                    break;
+                default:
+                    break;
+                }
+
+                total += v * amplitude;
+                max_value += amplitude;
+                amplitude *= _persistence;
+                frequency *= _lacunarity;
+            }
+            return total / max_value;
+        }
+
     protected:
         static void _bind_methods();
 

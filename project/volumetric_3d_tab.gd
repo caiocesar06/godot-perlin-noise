@@ -32,6 +32,7 @@ var zoom_speed: float = 5.0
 func _ready() -> void:
 	perlin = PerlinNoise.new()
 	perlin.set_seed(42)
+	perlin.set_fractal_type(2)
 	
 	generate_button.pressed.connect(_on_generate_button_pressed)
 	
@@ -111,7 +112,7 @@ func _generate_3d_terrain() -> void:
 	
 	for z in range(grid_size):
 		for x in range(grid_size):
-			var y_height = perlin.get_fbm_2d(x * scale_factor, z * scale_factor) * amplitude
+			var y_height = perlin.get_fractal_noise_2d(x * scale_factor, z * scale_factor) * amplitude
 			surface_tool.set_uv(Vector2(x, z) / float(grid_size))
 			surface_tool.add_vertex(Vector3(x, y_height, z))
 	

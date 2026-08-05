@@ -125,65 +125,15 @@ namespace godot {
     int32_t NoiseBase::get_fractal_type() const { return static_cast<int32_t>(_fractal_type); }
 
     double NoiseBase::get_fractal_noise_2d(double x, double y) const {
-        double total = 0.0;
-        double amplitude = 1.0;
-        double frequency = 1.0;
-        double max_value = 0.0;
-        for (int i = 0; i < _octaves; ++i) {
-            double v = get_noise_2d(x * frequency, y * frequency);
-
-            switch (_fractal_type) {
-                case FractalType::FBM:
-                    break;
-                case FractalType::RIDGED:
-                    v = 1.0 - (2.0 * std::abs(v));
-                    break;
-                case FractalType::BILLOW:
-                    v = (2.0 * std::abs(v)) - 1.0;
-                    break;
-                default:
-                    break;
-            }
-
-            total += v * amplitude;
-            max_value += amplitude;
-            amplitude *= _persistence;
-            frequency *= _lacunarity;
-        }
-        return total / max_value;
+        return _calculate_fractal([this, x, y](double freq) {
+            return get_noise_2d(x * freq, y * freq);
+        });
     }
 
     double NoiseBase::get_fractal_noise_3d(double x, double y, double z) const {
-        double total = 0.0;
-        double amplitude = 1.0;
-        double frequency = 1.0;
-        double max_value = 0.0;
-        for (int i = 0; i < _octaves; ++i) {
-            double v = get_noise_3d(
-                x * frequency,
-                y * frequency,
-                z * frequency
-            );
-
-            switch (_fractal_type) {
-                case FractalType::FBM:
-                    break;
-                case FractalType::RIDGED:
-                    v = 1.0 - (2.0 * std::abs(v));
-                    break;
-                case FractalType::BILLOW:
-                    v = (2.0 * std::abs(v)) - 1.0;
-                    break;
-                default:
-                    break;
-            }
-
-            total += v * amplitude;
-            max_value += amplitude;
-            amplitude *= _persistence;
-            frequency *= _lacunarity;
-        }
-        return total / max_value;
+        return _calculate_fractal([this, x, y, z](double freq) {
+            return get_noise_3d(x * freq, y * freq, z * freq);
+            });
     }
 
     PackedByteArray NoiseBase::get_fbm_image_data(
