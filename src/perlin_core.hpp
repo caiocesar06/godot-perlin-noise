@@ -3,57 +3,34 @@
 #include <algorithm>
 #include <array>
 #include <cstdint>
-#include <numeric>
-#include <random>
-#include <vector>
+
+#include "permutation_table.hpp"
 
 namespace godot {
 
     enum class FadeMode { NONE, CUBIC, QUINTIC };
 
+    // Núcleo matemático puro do ruído Perlin. Sem dependência de Godot:
+    // pode ser testado isoladamente (unit tests) sem GDExtension.
+    //
+    // A tabela de permutação é possuída por composição (_hash), não por
+    // herança. Ver discussão no chat: nem todo algoritmo de ruído futuro
+    // (ex.: Worley) necessariamente usa esse mecanismo, então não faz
+    // sentido promovê-lo a uma classe base comum.
     class PerlinCore {
     private:
-        int64_t _seed = 0;
+        PermutationTable _hash;
         FadeMode _fade_mode = FadeMode::QUINTIC;
-        std::array<int, 512> _permutation;
 
     public:
-        PerlinCore() {
-            set_seed(std::random_device{}());
-        }
+        PerlinCore() = default;
 
-        explicit PerlinCore(int64_t p_seed) {
-            set_seed(p_seed);
-        }
+        explicit PerlinCore(int64_t p_seed) : _hash(p_seed) {}
 
-        void set_seed(int64_t p_seed) {
-            _seed = p_seed;
+        void set_seed(int64_t p_seed) { _hash.reseed(p_seed); }
+        int64_t get_seed() const { return _hash.get_seed(); }
 
-            std::array<int, 256> temp;
-            std::iota(temp.begin(), temp.end(), 0);
-
-            std::mt19937_64 engine(
-                static_cast<std::uint64_t>(_seed)
-            );
-
-            for (std::size_t i = temp.size() - 1; i > 0; --i) {
-                std::uniform_int_distribution<std::size_t>
-                    distribution(0, i);
-
-                const std::size_t j = distribution(engine);
-                std::swap(temp[i], temp[j]);
-            }
-
-            for (std::size_t i = 0; i < temp.size(); ++i) {
-                _permutation[i] = temp[i];
-                _permutation[i + 256] = temp[i];
-            }
-        }
-        int64_t get_seed() const { return _seed; }
-
-        void set_fade_mode(FadeMode mode) {
-            _fade_mode = mode;
-        }
+        void set_fade_mode(FadeMode mode) { _fade_mode = mode; }
         FadeMode get_fade_mode() const { return _fade_mode; }
 
 
@@ -78,7 +55,7 @@ namespace godot {
         }
 
         inline int hash(int x) const {
-            return _permutation[x];
+            return _hash.hash(x);
         }
 
 
@@ -106,6 +83,89 @@ namespace godot {
             };
             int h = hash % 12;
             return G3D[h][0] * x + G3D[h][1] * y + G3D[h][2] * z;
+        }
+
+        // ---------------------------------
+
+        double calculate_2d(double x, double y) const {
+            float fx = static_cast<float>(x);
+            float fy = static_cast<float>(y);
+
+            int xi = fast_floor(fx);
+            int yi = fast_floor(fy);
+            float xf = fx - xi;
+            float yf = fy - yi;
+
+            float u = fade(xf);
+            float v = fade(yf);
+
+            int i = xi & 255;
+            int j = yi & 255;
+
+            int aa = hash(hash(i) + j);
+            int ab = hash(hash(i) + j + 1);
+            int ba = hash(hash(i + 1) + j);
+            int bb = hash(hash(i + 1) + j + 1);
+
+            float x1 = lerp(u, grad_2d(aa, xf, yf), grad_2d(ba, xf - 1.0f, yf));
+            float x2 = lerp(u, grad_2d(ab, xf, yf - 1.0f), grad_2d(bb, xf - 1.0f, yf - 1.0f));
+
+            return static_cast<double>(lerp(v, x1, x2));
+        }
+
+        double calculate_3d(double x, double y, double z) const {
+            float fx = static_cast<float>(x);
+            float fy = static_cast<float>(y);
+            float fz = static_cast<float>(z);
+
+            int xi = fast_floor(fx);
+            int yi = fast_floor(fy);
+            int zi = fast_floor(fz);
+
+            float xf = fx - xi;
+            float yf = fy - yi;
+            float zf = fz - zi;
+
+            float u = fade(xf);
+            float v = fade(yf);
+            float w = fade(zf);
+
+            int i = xi & 255;
+            int j = yi & 255;
+            int k = zi & 255;
+
+            int a = hash(i) + j;
+            int aa = hash(a) + k;
+            int ab = hash(a + 1) + k;
+            int b = hash(i + 1) + j;
+            int ba = hash(b) + k;
+            int bb = hash(b + 1) + k;
+
+            float x1 = lerp(
+                u,
+                grad_3d(hash(aa), xf, yf, zf),
+                grad_3d(hash(ba), xf - 1.0f, yf, zf)
+            );
+            float x2 = lerp(
+                u,
+                grad_3d(hash(ab), xf, yf - 1.0f, zf),
+                grad_3d(hash(bb), xf - 1.0f, yf - 1.0f, zf)
+            );
+            float y1 = lerp(v, x1, x2);
+
+            float x3 = lerp(
+                u,
+                grad_3d(hash(aa + 1), xf, yf, zf - 1.0f),
+                grad_3d(hash(ba + 1), xf - 1.0f, yf, zf - 1.0f)
+            );
+            float x4 = lerp(
+                u,
+                grad_3d(hash(ab + 1), xf, yf - 1.0f, zf - 1.0f),
+                grad_3d(hash(bb + 1), xf - 1.0f, yf - 1.0f, zf - 1.0f)
+            );
+            float y2 = lerp(v, x3, x4);
+
+            return static_cast<double>(lerp(w, y1, y2));
         }
     };
 }

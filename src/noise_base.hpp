@@ -4,17 +4,21 @@
 #include <godot_cpp/variant/packed_byte_array.hpp>
 
 namespace godot {
-
-    enum class FractalType { FBM, RIDGED, BILLOW };
-
     class NoiseBase : public Resource {
         GDCLASS(NoiseBase, Resource)
+
+    public:
+        enum FractalType {
+            FRACTAL_FBM = 0,
+            FRACTAL_RIDGED,
+            FRACTAL_BILLOW
+        };
 
     private:
         int32_t _octaves = 4;
         double _persistence = 0.5;
         double _lacunarity = 2.0;
-        FractalType _fractal_type = FractalType::FBM;
+        FractalType _fractal_type = FractalType::FRACTAL_FBM;
 
         template <typename F>
         double _calculate_fractal(F evaluate_noise) const {
@@ -27,12 +31,12 @@ namespace godot {
                 double v = evaluate_noise(frequency);
 
                 switch (_fractal_type) {
-                case FractalType::FBM:
+                case FractalType::FRACTAL_FBM:
                     break;
-                case FractalType::RIDGED:
+                case FractalType::FRACTAL_RIDGED:
                     v = 1.0 - (2.0 * std::abs(v));
                     break;
-                case FractalType::BILLOW:
+                case FractalType::FRACTAL_BILLOW:
                     v = (2.0 * std::abs(v)) - 1.0;
                     break;
                 default:
@@ -67,6 +71,9 @@ namespace godot {
         int32_t get_fractal_type() const;
 
         // -------------------------------------------------- //
+
+        virtual void set_seed(int64_t p_seed) = 0;
+        virtual int64_t get_seed() const = 0;
 
         virtual double get_noise_2d(
             double x,
@@ -111,3 +118,5 @@ namespace godot {
         ) const;
     };
 }
+
+VARIANT_ENUM_CAST(godot::NoiseBase::FractalType);

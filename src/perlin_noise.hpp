@@ -17,8 +17,8 @@ namespace godot {
         PerlinNoise() = default;
         ~PerlinNoise() = default;
 
-        void set_seed(int64_t p_seed);
-        int64_t get_seed() const;
+        void set_seed(int64_t p_seed) override;
+        int64_t get_seed() const override;
 
         void set_fade_mode(int32_t p_mode);
         int32_t get_fade_mode() const;

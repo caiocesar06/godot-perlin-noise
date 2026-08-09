@@ -72,6 +72,10 @@ namespace godot {
             &NoiseBase::get_fbm_volume_data
         );
 
+        BIND_ENUM_CONSTANT(FRACTAL_FBM);
+        BIND_ENUM_CONSTANT(FRACTAL_RIDGED);
+        BIND_ENUM_CONSTANT(FRACTAL_BILLOW);
+
         ADD_PROPERTY(
             PropertyInfo(Variant::INT, "octaves", PROPERTY_HINT_RANGE, "1,16,1"),
             "set_octaves",
@@ -127,7 +131,7 @@ namespace godot {
     double NoiseBase::get_fractal_noise_2d(double x, double y) const {
         return _calculate_fractal([this, x, y](double freq) {
             return get_noise_2d(x * freq, y * freq);
-        });
+            });
     }
 
     double NoiseBase::get_fractal_noise_3d(double x, double y, double z) const {
